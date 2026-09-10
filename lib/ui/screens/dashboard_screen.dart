@@ -108,7 +108,7 @@ class DashboardScreen extends ConsumerWidget {
                         }
                       },
                       icon: const Icon(Icons.access_time),
-                      label: const Text('Scegli Orario d\\'Arrivo'),
+                      label: const Text("Scegli Orario d'Arrivo"),
                       style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16)),
                     ),
