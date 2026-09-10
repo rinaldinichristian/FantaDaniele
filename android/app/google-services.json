@@ -1,0 +1,162 @@
+{
+  "project_info": {
+    "project_number": "32192065185",
+    "project_id": "familyhub-dev-1785769770",
+    "storage_bucket": "familyhub-dev-1785769770.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:32192065185:android:db165e39c97edf772c8ae0",
+        "android_client_info": {
+          "package_name": "com.christian.aetherarmada"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "32192065185-nvkeslg094hdoecd5ac3nlsvj2turfvg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBiPJwX-NT92mX_Eu9ATQJ-HWOhLY5tmsY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "32192065185-nvkeslg094hdoecd5ac3nlsvj2turfvg.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "32192065185-a3bq4smrcqevq3ie23a3st31kqjb2o8j.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.triplaneTurmoil"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:32192065185:android:52e8fda775119ae02c8ae0",
+        "android_client_info": {
+          "package_name": "com.christian.fantadaniele.fantadaniele"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "32192065185-nvkeslg094hdoecd5ac3nlsvj2turfvg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBiPJwX-NT92mX_Eu9ATQJ-HWOhLY5tmsY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "32192065185-nvkeslg094hdoecd5ac3nlsvj2turfvg.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "32192065185-a3bq4smrcqevq3ie23a3st31kqjb2o8j.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.triplaneTurmoil"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:32192065185:android:4bf2a70c106d0c842c8ae0",
+        "android_client_info": {
+          "package_name": "com.example.triplane_turmoil"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "32192065185-nvkeslg094hdoecd5ac3nlsvj2turfvg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBiPJwX-NT92mX_Eu9ATQJ-HWOhLY5tmsY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "32192065185-nvkeslg094hdoecd5ac3nlsvj2turfvg.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "32192065185-a3bq4smrcqevq3ie23a3st31kqjb2o8j.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.triplaneTurmoil"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:32192065185:android:135c74209007ca7b2c8ae0",
+        "android_client_info": {
+          "package_name": "com.familiya.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "32192065185-dttuumi5jg6s00dbokidfrsit23jollq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.familiya.app",
+            "certificate_hash": "1a579858390b9cc4a1bdff34e44f5cb02c8106c5"
+          }
+        },
+        {
+          "client_id": "32192065185-nvkeslg094hdoecd5ac3nlsvj2turfvg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBiPJwX-NT92mX_Eu9ATQJ-HWOhLY5tmsY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "32192065185-nvkeslg094hdoecd5ac3nlsvj2turfvg.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "32192065185-a3bq4smrcqevq3ie23a3st31kqjb2o8j.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.triplaneTurmoil"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
