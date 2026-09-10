@@ -32,6 +32,10 @@ class DashboardScreen extends ConsumerWidget {
             onPressed: () => context.push('/leaderboard'),
           ),
           IconButton(
+            icon: const Icon(Icons.gavel),
+            onPressed: () => context.push('/admin'),
+          ),
+          IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
               ref.read(authControllerProvider).signOut();
@@ -112,7 +116,7 @@ class DashboardScreen extends ConsumerWidget {
                       style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16)),
                     ),
-                  ],
+                  ];
                 );
               },
               loading: () => const Center(child: CircularProgressIndicator()),
