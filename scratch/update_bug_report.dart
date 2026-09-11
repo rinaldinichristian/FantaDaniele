@@ -1,3 +1,8 @@
+import 'dart:io';
+
+void main() {
+  final file = File('lib/services/bug_report_service.dart');
+  final content = '''
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,7 +20,7 @@ class BugReportService {
   static const String _repoName = 'FantaDaniele';
 
   static void reportError(dynamic exception, dynamic stack) {
-    debugPrint('Uncaught Error: $exception\n$stack');
+    debugPrint('Uncaught Error: \$exception\\n\$stack');
   }
 
   Future<void> submitIssue({
@@ -30,7 +35,7 @@ class BugReportService {
     if (screenshotBytes != null) {
       try {
         final fileName =
-            'bug_reports/screenshot_${DateTime.now().millisecondsSinceEpoch}.png';
+            'bug_reports/screenshot_\${DateTime.now().millisecondsSinceEpoch}.png';
         final ref = FirebaseStorage.instance.ref().child(fileName);
 
         final uploadTask = await ref.putData(
@@ -39,7 +44,7 @@ class BugReportService {
         );
         screenshotUrl = await uploadTask.ref.getDownloadURL();
       } catch (e) {
-        debugPrint('Failed to upload screenshot to Firebase Storage: $e');
+        debugPrint('Failed to upload screenshot to Firebase Storage: \$e');
       }
     }
 
@@ -51,34 +56,34 @@ class BugReportService {
     if (!kIsWeb) {
       if (Platform.isAndroid) {
         final info = await deviceInfo.androidInfo;
-        deviceModel = '${info.manufacturer} ${info.model}';
-        osVersion = 'Android ${info.version.release} (API ${info.version.sdkInt})';
+        deviceModel = '\${info.manufacturer} \${info.model}';
+        osVersion = 'Android \${info.version.release} (API \${info.version.sdkInt})';
       } else if (Platform.isIOS) {
         final info = await deviceInfo.iosInfo;
         deviceModel = info.model;
-        osVersion = '${info.systemName} ${info.systemVersion}';
+        osVersion = '\${info.systemName} \${info.systemVersion}';
       }
     }
 
     final bodyBuffer = StringBuffer();
-    bodyBuffer.writeln('### Descrizione\n$description\n');
+    bodyBuffer.writeln('### Descrizione\\n\$description\\n');
     bodyBuffer.writeln('### Contesto');
-    bodyBuffer.writeln('- **Sezione App**: `$location`');
-    bodyBuffer.writeln('- **Dispositivo**: $deviceModel');
-    bodyBuffer.writeln('- **Sistema Operativo**: $osVersion\n');
+    bodyBuffer.writeln('- **Sezione App**: `\$location`');
+    bodyBuffer.writeln('- **Dispositivo**: \$deviceModel');
+    bodyBuffer.writeln('- **Sistema Operativo**: \$osVersion\\n');
 
     if (screenshotUrl != null) {
       bodyBuffer.writeln('### Screenshot');
-      bodyBuffer.writeln('![Screenshot]($screenshotUrl)');
+      bodyBuffer.writeln('![Screenshot](\$screenshotUrl)');
     } else if (screenshotBytes != null) {
       bodyBuffer.writeln('### Screenshot');
       bodyBuffer.writeln('*(Screenshot catturato ma non caricato per errore di rete)*');
     }
 
-    final encodedTitle = Uri.encodeComponent('[$type] $title');
+    final encodedTitle = Uri.encodeComponent('[\$type] \$title');
     final encodedBody = Uri.encodeComponent(bodyBuffer.toString());
     
-    final githubUrl = 'https://github.com/$_repoOwner/$_repoName/issues/new?title=$encodedTitle&body=$encodedBody&labels=$type';
+    final githubUrl = 'https://github.com/\$_repoOwner/\$_repoName/issues/new?title=\$encodedTitle&body=\$encodedBody&labels=\$type';
     final uri = Uri.parse(githubUrl);
     
     if (await canLaunchUrl(uri)) {
@@ -87,4 +92,7 @@ class BugReportService {
       throw Exception('Impossibile aprire il link verso GitHub.');
     }
   }
+}
+''';
+  file.writeAsStringSync(content);
 }

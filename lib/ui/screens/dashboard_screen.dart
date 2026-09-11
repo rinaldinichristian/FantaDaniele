@@ -231,7 +231,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       final bet = bets[index];
                       final timeString = '${bet.time.hour.toString().padLeft(2, '0')}:${bet.time.minute.toString().padLeft(2, '0')}';
                       final betUser = leaderboard.where((u) => u.id == bet.userId).firstOrNull;
-                      final displayName = betUser?.name ?? bet.userName;
+                      final displayName = (betUser != null && betUser.name.isNotEmpty && betUser.name != 'Utente Sconosciuto') ? betUser.name : bet.userName;
                       final avatarUrl = betUser?.avatarUrl;
 
                       final initial = displayName.isNotEmpty ? displayName[0].toUpperCase() : '?';

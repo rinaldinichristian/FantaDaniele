@@ -50,7 +50,7 @@ class FirestoreRepository {
   }
 
   Future<void> updateUserPoints(String userId, int points) async {
-    await _db.collection('fd_users').doc(userId).update({'points': points});
+    await _db.collection('fd_users').doc(userId).set({'points': points}, SetOptions(merge: true));
   }
 
   Future<void> updateUserRoles(String userId, {bool? isAdmin, bool? isDaniele, String? name, String? avatarUrl}) async {
@@ -60,7 +60,7 @@ class FirestoreRepository {
     if (name != null) data['name'] = name;
     if (avatarUrl != null) data['avatarUrl'] = avatarUrl;
     if (data.isNotEmpty) {
-      await _db.collection('fd_users').doc(userId).update(data);
+      await _db.collection('fd_users').doc(userId).set(data, SetOptions(merge: true));
     }
   }
 
