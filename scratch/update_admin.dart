@@ -1,3 +1,9 @@
+import 'dart:io';
+
+void main() {
+  final file = File('lib/ui/screens/admin_screen.dart');
+  
+  final content = '''
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -60,7 +66,7 @@ class _UsersAdminTab extends ConsumerWidget {
           return ListTile(
             leading: CircleAvatar(backgroundImage: user.avatarUrl != null ? NetworkImage(user.avatarUrl!) : null),
             title: Text(user.name),
-            subtitle: Text('Punti: ${user.points} | Streak: ${user.streak}'),
+            subtitle: Text('Punti: \${user.points} | Streak: \${user.streak}'),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -85,7 +91,7 @@ class _UsersAdminTab extends ConsumerWidget {
         },
       ),
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, st) => Center(child: Text('Errore: $e')),
+      error: (e, st) => Center(child: Text('Errore: \$e')),
     );
   }
 
@@ -94,7 +100,7 @@ class _UsersAdminTab extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Modifica Punti di ${user.name}'),
+        title: Text('Modifica Punti di \${user.name}'),
         content: TextField(
           controller: ctrl,
           keyboardType: TextInputType.number,
@@ -134,13 +140,13 @@ class _SessionAdminTabState extends ConsumerState<_SessionAdminTab> {
 
     setState(() => _uploading = true);
     try {
-      final ref = FirebaseStorage.instance.ref().child('proof_images/${DateTime.now().millisecondsSinceEpoch}.jpg');
+      final ref = FirebaseStorage.instance.ref().child('proof_images/\${DateTime.now().millisecondsSinceEpoch}.jpg');
       await ref.putFile(io.File(xFile.path));
       final url = await ref.getDownloadURL();
       setState(() => _uploadedImageUrl = url);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Errore upload: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Errore upload: \$e')));
       }
     } finally {
       if (mounted) setState(() => _uploading = false);
@@ -252,7 +258,7 @@ class _SessionSettingsTabState extends ConsumerState<_SessionSettingsTab> {
             const SizedBox(height: 24),
             ListTile(
               title: const Text('Data Inizio Giro'),
-              subtitle: Text(_startDate != null ? "${_startDate!.day}/${_startDate!.month}/${_startDate!.year}" : 'Non impostata'),
+              subtitle: Text(_startDate != null ? "\${_startDate!.day}/\${_startDate!.month}/\${_startDate!.year}" : 'Non impostata'),
               trailing: const Icon(Icons.calendar_today),
               onTap: () async {
                 final date = await showDatePicker(
@@ -266,7 +272,7 @@ class _SessionSettingsTabState extends ConsumerState<_SessionSettingsTab> {
             ),
             ListTile(
               title: const Text('Data Fine Giro'),
-              subtitle: Text(_endDate != null ? "${_endDate!.day}/${_endDate!.month}/${_endDate!.year}" : 'Non impostata'),
+              subtitle: Text(_endDate != null ? "\${_endDate!.day}/\${_endDate!.month}/\${_endDate!.year}" : 'Non impostata'),
               trailing: const Icon(Icons.calendar_today),
               onTap: () async {
                 final date = await showDatePicker(
@@ -279,17 +285,6 @@ class _SessionSettingsTabState extends ConsumerState<_SessionSettingsTab> {
               },
             ),
             const SizedBox(height: 32),
-            OutlinedButton.icon(
-              icon: const Icon(Icons.refresh),
-              label: const Text('Azzera tutti gli Streak'),
-              onPressed: () async {
-                await ref.read(firestoreRepositoryProvider).resetAllStreaks();
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Streak azzerati!')));
-                }
-              },
-            ),
-            const SizedBox(height: 16),
             FilledButton.icon(
               icon: const Icon(Icons.save),
               label: const Text('Salva Impostazioni'),
@@ -308,7 +303,11 @@ class _SessionSettingsTabState extends ConsumerState<_SessionSettingsTab> {
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, st) => Center(child: Text('Errore caricamento impostazioni: $e')),
+      error: (e, st) => Center(child: Text('Errore caricamento impostazioni: \$e')),
     );
   }
+}
+''';
+
+  file.writeAsStringSync(content);
 }

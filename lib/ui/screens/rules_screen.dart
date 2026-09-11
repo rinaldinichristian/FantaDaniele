@@ -25,12 +25,12 @@ class RulesScreen extends StatelessWidget {
           _RuleCard(
             icon: Icons.gavel,
             title: '3. Regole di Inserimento',
-            description: 'Cerca di differenziare il tuo orario da quello degli altri colleghi. Se ci sono parimeriti, l\'Arbitro avrà l\'ultima parola.',
+            description: 'Non è possibile inserire due orari uguali. Il primo che arriva decide!',
           ),
           _RuleCard(
             icon: Icons.stars,
-            title: '4. Punti e Medaglie',
-            description: 'Chi si avvicina di più all\'orario effettivo vince 1 punto.\nI primi in classifica ottengono le medaglie 🥇🥈🥉.\nL\'ultimo in classifica (con zero punti) riceve il temutissimo legno 🪵.',
+            title: '4. Punti',
+            description: 'Chi indovina l\'orario esatto (o ci si avvicina di più) vince 1 punto. Se nessuno indovina l\'orario esatto, il punto va a Daniele!',
           ),
           _RuleCard(
             icon: Icons.local_fire_department,
@@ -39,8 +39,8 @@ class RulesScreen extends StatelessWidget {
           ),
           _RuleCard(
             icon: Icons.emoji_events,
-            title: '6. Premi in Palio',
-            description: 'Il vincitore della classifica mensile avrà il diritto di decidere a che altezza impostare le tapparelle in ufficio e un pranzo offerto.',
+            title: '6. Il Giro e il Montepremi',
+            description: 'Gli amministratori impostano la durata del giro e il montepremi in palio. Il vincitore del giro ottiene la gloria (e il montepremi)!',
           ),
         ],
       ),

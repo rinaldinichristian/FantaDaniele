@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../models/bet.dart';
 import '../models/daily_session.dart';
 import '../models/app_user.dart';
+import '../models/app_settings.dart';
 
 final firestoreRepositoryProvider = Provider((ref) => FirestoreRepository());
 
@@ -13,6 +14,20 @@ class FirestoreRepository {
 
   // L'ID della sessione è la data odierna formattata (es: "2026-09-10")
   String get _todayId => DateFormat('yyyy-MM-dd').format(DateTime.now());
+
+    // ----------------------------------------
+  // IMPOSTAZIONI GLOBALI
+  // ----------------------------------------
+  Stream<AppSettings> watchSettings() {
+    return _db.collection('fd_settings').doc('global').snapshots().map((doc) {
+      if (!doc.exists || doc.data() == null) return AppSettings();
+      return AppSettings.fromMap(doc.data()!);
+    });
+  }
+
+  Future<void> updateSettings(AppSettings settings) async {
+    await _db.collection('fd_settings').doc('global').set(settings.toMap(), SetOptions(merge: true));
+  }
 
   // ----------------------------------------
   // UTENTI E LEADERBOARD
@@ -25,6 +40,13 @@ class FirestoreRepository {
         .map((snapshot) => snapshot.docs
             .map((doc) => AppUser.fromMap(doc.id, doc.data()))
             .toList());
+  }
+
+  Future<void> resetAllStreaks() async {
+    final users = await _db.collection('fd_users').get();
+    for (var u in users.docs) {
+      await _db.collection('fd_users').doc(u.id).update({'streak': 0});
+    }
   }
 
   Future<void> updateUserPoints(String userId, int points) async {
@@ -61,13 +83,14 @@ class FirestoreRepository {
     }, SetOptions(merge: true));
   }
 
-  Future<void> endSession(int actualHour, int actualMinute) async {
+  Future<void> endSession(int actualHour, int actualMinute, {String? proofImageUrl}) async {
     final sessionRef = _db.collection('fd_sessions').doc(_todayId);
     
     await sessionRef.set({
       'isOpen': false,
       'arrivalHour': actualHour,
       'arrivalMinute': actualMinute,
+      if (proofImageUrl != null) 'proofImageUrl': proofImageUrl,
     }, SetOptions(merge: true));
 
     final betsSnapshot = await sessionRef.collection('bets').get();
@@ -89,33 +112,42 @@ class FirestoreRepository {
       }
     }
 
-    if (winnerId != null) {
+    if (minDiff == 0 && winnerId != null) {
       await sessionRef.set({'winnerId': winnerId}, SetOptions(merge: true));
-
-      for (var doc in betsSnapshot.docs) {
-        final betUserId = doc.id;
-        final isWinner = (betUserId == winnerId);
-        final userRef = _db.collection('fd_users').doc(betUserId);
-        
-        await _db.runTransaction((transaction) async {
-          final userSnap = await transaction.get(userRef);
-          if (userSnap.exists) {
-            int currentPoints = userSnap.data()?['points']?.toInt() ?? 0;
-            int currentStreak = userSnap.data()?['streak']?.toInt() ?? 0;
-
-            if (isWinner) {
-              transaction.update(userRef, {
-                'points': currentPoints + 1,
-                'streak': currentStreak + 1,
-              });
-            } else {
-              transaction.update(userRef, {
-                'streak': 0,
-              });
-            }
-          }
-        });
+    } else {
+      // Nessuno ha indovinato l'orario esatto. Trova Daniele e dagli il punto.
+      final usersSnap = await _db.collection('fd_users').where('isDaniele', isEqualTo: true).get();
+      if (usersSnap.docs.isNotEmpty) {
+        winnerId = usersSnap.docs.first.id;
+        await sessionRef.set({'winnerId': winnerId, 'danieleWon': true}, SetOptions(merge: true));
       }
+    }
+
+    // Aggiorna punteggi e streak per tutti
+    final allUsersSnap = await _db.collection('fd_users').get();
+    for (var doc in allUsersSnap.docs) {
+      final userId = doc.id;
+      final isWinner = (userId == winnerId);
+      final userRef = _db.collection('fd_users').doc(userId);
+      
+      await _db.runTransaction((transaction) async {
+        final userSnap = await transaction.get(userRef);
+        if (userSnap.exists) {
+          int currentPoints = userSnap.data()?['points']?.toInt() ?? 0;
+          int currentStreak = userSnap.data()?['streak']?.toInt() ?? 0;
+
+          if (isWinner) {
+            transaction.update(userRef, {
+              'points': currentPoints + 1,
+              'streak': currentStreak + 1,
+            });
+          } else {
+            transaction.update(userRef, {
+              'streak': 0,
+            });
+          }
+        }
+      });
     }
   }
 
@@ -147,7 +179,14 @@ class FirestoreRepository {
       throw Exception('Hai già piazzato la tua scommessa per oggi!');
     }
     
-    // In futuro: validazione sulla vicinanza dell'orario con altre scommesse.
+        // In futuro: validazione sulla vicinanza dell'orario con altre scommesse.
+    final todayBets = await _db.collection('fd_sessions').doc(_todayId).collection('bets').get();
+    for (var d in todayBets.docs) {
+      if (d.data()['hour'] == hour && d.data()['minute'] == minute) {
+        throw Exception('Orario già inserito! Il primo che arriva decide, scegline un altro.');
+      }
+    }
+
 
     await betRef.set({
       'userId': userId,

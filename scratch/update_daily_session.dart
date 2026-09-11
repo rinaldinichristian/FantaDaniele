@@ -1,3 +1,8 @@
+import 'dart:io';
+
+void main() {
+  final file = File('lib/models/daily_session.dart');
+  final content = '''
 import 'package:flutter/material.dart';
 
 class DailySession {
@@ -43,4 +48,7 @@ class DailySession {
       'proofImageUrl': proofImageUrl,
     };
   }
+}
+''';
+  file.writeAsStringSync(content);
 }
