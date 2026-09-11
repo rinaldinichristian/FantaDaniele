@@ -32,7 +32,15 @@ jobs:
         run: flutter pub get
 
       - name: Build APK
-        run: flutter build apk --release
+        run: flutter build apk --release -v > build_log.txt 2>&1 || true
+
+      - name: Commit Log
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add build_log.txt
+          git commit -m "Upload build log"
+          git push
 
       - name: Create Release
         uses: ncipollo/release-action@v1
