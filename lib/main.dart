@@ -8,6 +8,7 @@ import 'ui/screens/login_screen.dart';
 import 'ui/screens/dashboard_screen.dart';
 import 'ui/screens/leaderboard_screen.dart';
 import 'ui/screens/admin_screen.dart';
+import 'ui/screens/rules_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,6 +38,10 @@ final _router = GoRouter(
     GoRoute(
       path: '/admin',
       builder: (context, state) => const AdminScreen(),
+    ),
+    GoRoute(
+      path: '/rules',
+      builder: (context, state) => const RulesScreen(),
     ),
   ],
 );

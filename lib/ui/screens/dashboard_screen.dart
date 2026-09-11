@@ -28,6 +28,10 @@ class DashboardScreen extends ConsumerWidget {
         title: const Text('FantaDaniele'),
         actions: [
           IconButton(
+            icon: const Icon(Icons.help_outline),
+            onPressed: () => context.push('/rules'),
+          ),
+          IconButton(
             icon: const Icon(Icons.leaderboard),
             onPressed: () => context.push('/leaderboard'),
           ),
@@ -116,7 +120,7 @@ class DashboardScreen extends ConsumerWidget {
                       style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16)),
                     ),
-                  ];
+                  ],
                 );
               },
               loading: () => const Center(child: CircularProgressIndicator()),
