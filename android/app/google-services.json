@@ -50,6 +50,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "32192065185-ee9pjb3g4b3fgsl16819edpdkue3mult.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.christian.fantadaniele.fantadaniele",
+            "certificate_hash": "353db882731da98ee84f5904ce487d82a29861aa"
+          }
+        },
+        {
           "client_id": "32192065185-nvkeslg094hdoecd5ac3nlsvj2turfvg.apps.googleusercontent.com",
           "client_type": 3
         }
