@@ -4,6 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
+import 'logic/auth_provider.dart';
+import 'ui/widgets/shake_detector_wrapper.dart';
+
 import 'ui/screens/login_screen.dart';
 import 'ui/screens/dashboard_screen.dart';
 import 'ui/screens/leaderboard_screen.dart';
@@ -58,6 +61,9 @@ class FantaDanieleApp extends StatelessWidget {
         useMaterial3: true,
       ),
       routerConfig: _router,
+      builder: (context, child) {
+        return ShakeDetectorWrapper(child: child!);
+      },
       debugShowCheckedModeBanner: false,
     );
   }

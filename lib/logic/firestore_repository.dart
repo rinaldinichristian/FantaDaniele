@@ -27,6 +27,19 @@ class FirestoreRepository {
             .toList());
   }
 
+  Future<void> updateUserPoints(String userId, int points) async {
+    await _db.collection('users').doc(userId).update({'points': points});
+  }
+
+  Future<void> updateUserRoles(String userId, {bool? isAdmin, bool? isDaniele}) async {
+    final Map<String, dynamic> data = {};
+    if (isAdmin != null) data['isAdmin'] = isAdmin;
+    if (isDaniele != null) data['isDaniele'] = isDaniele;
+    if (data.isNotEmpty) {
+      await _db.collection('users').doc(userId).update(data);
+    }
+  }
+
   // ----------------------------------------
   // SESSIONE GIORNALIERA
   // ----------------------------------------

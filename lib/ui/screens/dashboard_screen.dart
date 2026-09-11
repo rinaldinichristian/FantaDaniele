@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../logic/auth_provider.dart';
 import '../../logic/firestore_repository.dart';
+import '../../services/update_service.dart';
+import 'leaderboard_screen.dart';
 
 // Providers per gli stream della dashboard
 final todaySessionProvider = StreamProvider((ref) {
@@ -14,11 +16,24 @@ final todayBetsProvider = StreamProvider((ref) {
   return ref.watch(firestoreRepositoryProvider).watchTodayBets();
 });
 
-class DashboardScreen extends ConsumerWidget {
+class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends ConsumerState<DashboardScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      UpdateService.checkForUpdates(context);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final sessionAsync = ref.watch(todaySessionProvider);
     final betsAsync = ref.watch(todayBetsProvider);
     final user = ref.watch(authStateProvider).value;
@@ -35,10 +50,13 @@ class DashboardScreen extends ConsumerWidget {
             icon: const Icon(Icons.leaderboard),
             onPressed: () => context.push('/leaderboard'),
           ),
-          IconButton(
-            icon: const Icon(Icons.gavel),
-            onPressed: () => context.push('/admin'),
-          ),
+          // We must check if the user is admin. Since leaderboardProvider might still be loading,
+          // we'll conditionally show the button if they are admin in the leaderboard.
+          if ((ref.watch(leaderboardProvider).value ?? []).where((u) => u.id == user?.uid).firstOrNull?.isAdmin ?? false)
+            IconButton(
+              icon: const Icon(Icons.admin_panel_settings),
+              onPressed: () => context.push('/admin'),
+            ),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
@@ -135,6 +153,18 @@ class DashboardScreen extends ConsumerWidget {
             Expanded(
               child: betsAsync.when(
                 data: (bets) {
+                  final leaderboard = ref.watch(leaderboardProvider).value ?? [];
+                  final appUser = leaderboard.where((u) => u.id == user?.uid).firstOrNull;
+                  final isDaniele = appUser?.isDaniele ?? false;
+
+                  if (isDaniele) {
+                    return const Center(
+                      child: Text(
+                        'Le scommesse sono nascoste per te, Daniele! 😉',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    );
+                  }
                   if (bets.isEmpty) {
                     return const Center(child: Text('Nessuna scommessa piazzata oggi.'));
                   }

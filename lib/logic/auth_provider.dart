@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 final authStateProvider = StreamProvider<User?>((ref) {
   return FirebaseAuth.instance.authStateChanges();
@@ -31,15 +32,30 @@ class AuthController {
       // Salva il profilo dell'utente su Firestore al primo accesso
       final user = userCredential.user;
       if (user != null) {
+        // Richiedi i permessi per le notifiche e ottieni il token FCM
+        final messaging = FirebaseMessaging.instance;
+        await messaging.requestPermission();
+        final fcmToken = await messaging.getToken();
+
         final userDoc = await _firestore.collection('users').doc(user.uid).get();
         if (!userDoc.exists) {
+          // Se è il primissimo utente di tutto il database, lo facciamo Admin
+          final usersCount = await _firestore.collection('users').count().get();
+          final isFirst = usersCount.count == 0;
+
           await _firestore.collection('users').doc(user.uid).set({
             'name': user.displayName ?? 'Utente Sconosciuto',
             'avatarUrl': user.photoURL,
             'points': 0,
             'streak': 0,
+            'isAdmin': isFirst,
+            'isDaniele': false,
+            'fcmToken': fcmToken,
             'createdAt': FieldValue.serverTimestamp(),
           });
+        } else {
+          // Aggiorna il token se già esiste
+          await _firestore.collection('users').doc(user.uid).update({'fcmToken': fcmToken});
         }
       }
     } catch (e) {
