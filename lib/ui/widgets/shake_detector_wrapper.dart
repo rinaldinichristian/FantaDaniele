@@ -18,26 +18,26 @@ class ShakeDetectorWrapper extends ConsumerStatefulWidget {
 
 class _ShakeDetectorWrapperState extends ConsumerState<ShakeDetectorWrapper> {
   final ScreenshotController _screenshotController = ScreenshotController();
-  StreamSubscription<AccelerometerEvent>? _streamSubscription;
+  StreamSubscription<UserAccelerometerEvent>? _streamSubscription;
   DateTime _lastShake = DateTime.now();
   bool _isReporting = false;
 
   @override
   void initState() {
     super.initState();
-    _streamSubscription = accelerometerEventStream().listen((
-      AccelerometerEvent event,
+    _streamSubscription = userAccelerometerEventStream().listen((
+      UserAccelerometerEvent event,
     ) {
       if (_isReporting) return;
 
-      // Calculate shake magnitude
+      // Calculate shake magnitude (excluding gravity)
       double gX = event.x / 9.80665;
       double gY = event.y / 9.80665;
       double gZ = event.z / 9.80665;
       double gForce = sqrt(gX * gX + gY * gY + gZ * gZ);
 
-      // Threshold for shake (e.g., 2.5 g)
-      if (gForce > 2.5) {
+      // Lower threshold for shake since gravity is excluded (e.g., 1.5 g)
+      if (gForce > 1.5) {
         final now = DateTime.now();
         if (now.difference(_lastShake) > const Duration(seconds: 2)) {
           _lastShake = now;
