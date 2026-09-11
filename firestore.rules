@@ -2,8 +2,44 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && 
+        exists(/databases/$(database)/documents/fd_users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/fd_users/$(request.auth.uid)).data.isAdmin == true;
+    }
+
+    match /fd_users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      allow update: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      allow delete: if isAdmin();
+    }
+
+    match /fd_sessions/{sessionId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+
+      match /bets/{betId} {
+        allow read: if isAuthenticated();
+        allow create, update: if isAuthenticated() && (request.auth.uid == betId || isAdmin());
+        allow delete: if isAdmin();
+      }
+    }
+
+    match /chat/{messageId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isAdmin();
+    }
+
+    // Default deny
     match /{document=**} {
-      allow read, write: if request.auth != null;
+      allow read, write: if false;
     }
   }
 }

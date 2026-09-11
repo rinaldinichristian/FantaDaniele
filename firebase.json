@@ -1,1 +1,25 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"familyhub-dev-1785769770","appId":"1:32192065185:android:52e8fda775119ae02c8ae0","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"familyhub-dev-1785769770","configurations":{"android":"1:32192065185:android:52e8fda775119ae02c8ae0","web":"1:32192065185:web:69847b4fa05d616b2c8ae0"}}}}},"firestore":{"rules":"firestore.rules"}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "fantadaniele-1789130370",
+          "appId": "1:77516879618:android:ffdf0c1b884d9cc09ff41b",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "fantadaniele-1789130370",
+          "configurations": {
+            "android": "1:77516879618:android:ffdf0c1b884d9cc09ff41b",
+            "web": "1:77516879618:web:fd88a28b31f5fb509ff41b"
+          }
+        }
+      }
+    }
+  },
+  "firestore": {
+    "rules": "firestore.rules"
+  }
+}

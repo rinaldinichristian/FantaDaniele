@@ -50,19 +50,19 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyByGhxP7dHUqcVf4uzvnkdbrttY0laO-do',
-    appId: '1:32192065185:web:69847b4fa05d616b2c8ae0',
-    messagingSenderId: '32192065185',
-    projectId: 'familyhub-dev-1785769770',
-    authDomain: 'familyhub-dev-1785769770.firebaseapp.com',
-    storageBucket: 'familyhub-dev-1785769770.firebasestorage.app',
+    apiKey: 'AIzaSyD_UufM24ydIux9c_VquKI9HaaDK2TMWJQ',
+    appId: '1:77516879618:web:fd88a28b31f5fb509ff41b',
+    messagingSenderId: '77516879618',
+    projectId: 'fantadaniele-1789130370',
+    authDomain: 'fantadaniele-1789130370.firebaseapp.com',
+    storageBucket: 'fantadaniele-1789130370.firebasestorage.app',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBiPJwX-NT92mX_Eu9ATQJ-HWOhLY5tmsY',
-    appId: '1:32192065185:android:52e8fda775119ae02c8ae0',
-    messagingSenderId: '32192065185',
-    projectId: 'familyhub-dev-1785769770',
-    storageBucket: 'familyhub-dev-1785769770.firebasestorage.app',
+    apiKey: 'AIzaSyAqE6fE3NLCn-M70sUdxXVlp8MvGov_zYY',
+    appId: '1:77516879618:android:ffdf0c1b884d9cc09ff41b',
+    messagingSenderId: '77516879618',
+    projectId: 'fantadaniele-1789130370',
+    storageBucket: 'fantadaniele-1789130370.firebasestorage.app',
   );
 }
