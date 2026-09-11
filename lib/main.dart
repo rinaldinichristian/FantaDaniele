@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
-import 'logic/auth_provider.dart';
 import 'ui/widgets/shake_detector_wrapper.dart';
 import 'logic/theme_provider.dart';
 

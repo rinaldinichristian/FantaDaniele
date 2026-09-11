@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../logic/auth_provider.dart';
 import '../../logic/firestore_repository.dart';
 import '../../models/app_user.dart';
+import 'leaderboard_screen.dart';
 
 final chatProvider = StreamProvider<List<ChatMessage>>((ref) {
   return ref.watch(firestoreRepositoryProvider).watchChatMessages();

@@ -213,7 +213,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               ),
             ),
           ],
-        );
+        ),
+      );
+
         
         return ClipRect(
           child: Banner(
