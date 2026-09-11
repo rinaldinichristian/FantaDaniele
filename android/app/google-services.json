@@ -12,7 +12,20 @@
           "package_name": "com.christian.fantadaniele.fantadaniele"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "77516879618-39a3etnnqbah08lffn0dm79q3hj4j4a4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.christian.fantadaniele.fantadaniele",
+            "certificate_hash": "353db882731da98ee84f5904ce487d82a29861aa"
+          }
+        },
+        {
+          "client_id": "77516879618-fp5d6earf07tn8c5uu1r71bfcbmmv0it.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAqE6fE3NLCn-M70sUdxXVlp8MvGov_zYY"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "77516879618-fp5d6earf07tn8c5uu1r71bfcbmmv0it.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
