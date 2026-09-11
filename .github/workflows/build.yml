@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 jobs:
   build_and_release:
@@ -20,7 +21,7 @@ jobs:
         uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
-          java-version: '21'
+          java-version: '17'
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -31,7 +32,21 @@ jobs:
         run: flutter pub get
 
       - name: Build APK
-        run: flutter build apk --release
+        run: flutter build apk --release -v > build_log.txt 2>&1
+        continue-on-error: true
+
+      - name: Report Build Error
+        if: always()
+        run: |
+          if grep -q "Process completed with exit code" build_log.txt || grep -q "FAILED" build_log.txt || grep -q "Exception" build_log.txt; then
+            echo '```text' > issue_body.txt
+            tail -n 250 build_log.txt >> issue_body.txt
+            echo '```' >> issue_body.txt
+            gh issue create --title "Build Log ${{ github.run_number }}" --body-file issue_body.txt
+            exit 1
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create Release
         uses: ncipollo/release-action@v1
