@@ -31,11 +31,12 @@ class FirestoreRepository {
     await _db.collection('fd_users').doc(userId).update({'points': points});
   }
 
-  Future<void> updateUserRoles(String userId, {bool? isAdmin, bool? isDaniele, String? name}) async {
+  Future<void> updateUserRoles(String userId, {bool? isAdmin, bool? isDaniele, String? name, String? avatarUrl}) async {
     final data = <String, dynamic>{};
     if (isAdmin != null) data['isAdmin'] = isAdmin;
     if (isDaniele != null) data['isDaniele'] = isDaniele;
     if (name != null) data['name'] = name;
+    if (avatarUrl != null) data['avatarUrl'] = avatarUrl;
     if (data.isNotEmpty) {
       await _db.collection('fd_users').doc(userId).update(data);
     }
@@ -170,12 +171,16 @@ class FirestoreRepository {
             .toList());
   }
 
-  Future<void> sendMessage({required String userId, required String userName, required String text}) async {
-    await _db.collection('chat').add({
+  Future<void> sendMessage({required String userId, required String userName, required String text, String? imageUrl}) async {
+    final data = <String, dynamic>{
       'userId': userId,
       'userName': userName,
       'text': text,
       'timestamp': FieldValue.serverTimestamp(),
-    });
+    };
+    if (imageUrl != null) {
+      data['imageUrl'] = imageUrl;
+    }
+    await _db.collection('chat').add(data);
   }
 }

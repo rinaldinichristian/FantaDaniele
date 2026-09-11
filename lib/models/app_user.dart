@@ -50,6 +50,7 @@ class ChatMessage {
   final String userId;
   final String userName;
   final String text;
+  final String? imageUrl;
   final DateTime timestamp;
 
   ChatMessage({
@@ -57,6 +58,7 @@ class ChatMessage {
     required this.userId,
     required this.userName,
     required this.text,
+    this.imageUrl,
     required this.timestamp,
   });
 
@@ -66,6 +68,7 @@ class ChatMessage {
       userId: data['userId'] ?? '',
       userName: data['userName'] ?? 'Utente',
       text: data['text'] ?? '',
+      imageUrl: data['imageUrl'],
       timestamp: data['timestamp']?.toDate() ?? DateTime.now(),
     );
   }

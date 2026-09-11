@@ -138,9 +138,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
                         if (time != null && context.mounted) {
                           try {
+                            final currentLeaderboard = ref.read(leaderboardProvider).value ?? [];
+                            final currentAppUser = currentLeaderboard.where((u) => u.id == user.uid).firstOrNull;
+                            final nickname = currentAppUser?.name ?? user.displayName ?? 'Utente';
                             await ref.read(firestoreRepositoryProvider).placeBet(
                                   userId: user.uid,
-                                  userName: user.displayName ?? 'Utente',
+                                  userName: nickname,
                                   hour: time.hour,
                                   minute: time.minute,
                                 );
@@ -198,11 +201,18 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     itemBuilder: (context, index) {
                       final bet = bets[index];
                       final timeString = '${bet.time.hour.toString().padLeft(2, '0')}:${bet.time.minute.toString().padLeft(2, '0')}';
-                      final initial = bet.userName.isNotEmpty ? bet.userName[0].toUpperCase() : '?';
+                      final betUser = leaderboard.where((u) => u.id == bet.userId).firstOrNull;
+                      final displayName = betUser?.name ?? bet.userName;
+                      final avatarUrl = betUser?.avatarUrl;
+
+                      final initial = displayName.isNotEmpty ? displayName[0].toUpperCase() : '?';
 
                       return ListTile(
-                        leading: CircleAvatar(child: Text(initial)),
-                        title: Text(bet.userName),
+                        leading: CircleAvatar(
+                          backgroundImage: avatarUrl != null ? NetworkImage(avatarUrl) : null,
+                          child: avatarUrl == null ? Text(initial) : null,
+                        ),
+                        title: Text(displayName),
                         trailing: Text(timeString, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                       );
                     },

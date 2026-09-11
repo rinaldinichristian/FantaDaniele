@@ -1,5 +1,9 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:uuid/uuid.dart';
 import '../../logic/auth_provider.dart';
 import '../../logic/firestore_repository.dart';
 import '../../models/app_user.dart';
@@ -18,15 +22,49 @@ class ChatScreen extends ConsumerStatefulWidget {
 
 class _ChatScreenState extends ConsumerState<ChatScreen> {
   final _textController = TextEditingController();
+  bool _isUploadingImage = false;
 
-  void _sendMessage(String text, AppUser? user) {
-    if (text.trim().isEmpty || user == null) return;
+  void _sendMessage(String text, AppUser? user, {String? imageUrl}) {
+    if ((text.trim().isEmpty && imageUrl == null) || user == null) return;
     ref.read(firestoreRepositoryProvider).sendMessage(
       userId: user.id,
       userName: user.name,
       text: text.trim(),
+      imageUrl: imageUrl,
     );
     _textController.clear();
+  }
+
+  Future<void> _pickAndSendImage(AppUser? user) async {
+    if (user == null) return;
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery, maxWidth: 1200, imageQuality: 80);
+
+    if (pickedFile != null) {
+      setState(() {
+        _isUploadingImage = true;
+      });
+      try {
+        final imageId = const Uuid().v4();
+        final storageRef = FirebaseStorage.instance.ref().child('chat_images/$imageId.jpg');
+        await storageRef.putFile(File(pickedFile.path));
+        final downloadUrl = await storageRef.getDownloadURL();
+        
+        _sendMessage('', user, imageUrl: downloadUrl);
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Errore invio immagine: $e'), backgroundColor: Colors.red),
+          );
+        }
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isUploadingImage = false;
+          });
+        }
+      }
+    }
   }
 
   @override
@@ -78,12 +116,32 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                               ),
                               const SizedBox(height: 4),
                             ],
-                            Text(
-                              msg.text,
-                              style: TextStyle(
-                                color: isMe ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurface,
+                            if (msg.imageUrl != null && msg.imageUrl!.isNotEmpty) ...[
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(8.0),
+                                child: Image.network(
+                                  msg.imageUrl!,
+                                  width: 200,
+                                  fit: BoxFit.cover,
+                                  loadingBuilder: (context, child, progress) {
+                                    if (progress == null) return child;
+                                    return const SizedBox(
+                                      width: 200,
+                                      height: 150,
+                                      child: Center(child: CircularProgressIndicator()),
+                                    );
+                                  },
+                                ),
                               ),
-                            ),
+                              if (msg.text.isNotEmpty) const SizedBox(height: 8),
+                            ],
+                            if (msg.text.isNotEmpty)
+                              Text(
+                                msg.text,
+                                style: TextStyle(
+                                  color: isMe ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurface,
+                                ),
+                              ),
                           ],
                         ),
                       ),
@@ -100,6 +158,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
+                  IconButton(
+                    icon: _isUploadingImage 
+                        ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2))
+                        : const Icon(Icons.image),
+                    onPressed: _isUploadingImage ? null : () => _pickAndSendImage(appUser),
+                  ),
                   Expanded(
                     child: TextField(
                       controller: _textController,

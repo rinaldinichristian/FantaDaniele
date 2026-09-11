@@ -47,7 +47,7 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD || 'android' }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS || 'upload' }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD || 'android' }}
-        run: flutter build apk --release --build-name=1.0.${{ github.run_number }} --build-number=${{ github.run_number }} -v > build_log.txt 2>&1 || true
+        run: flutter build apk --release --dart-define=GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} --build-name=1.0.${{ github.run_number }} --build-number=${{ github.run_number }} -v > build_log.txt 2>&1 || true
 
       - name: Commit Log
         run: |

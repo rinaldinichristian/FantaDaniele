@@ -7,6 +7,8 @@ import 'firebase_options.dart';
 import 'ui/widgets/shake_detector_wrapper.dart';
 import 'logic/theme_provider.dart';
 
+import 'services/notification_service.dart';
+
 import 'ui/screens/login_screen.dart';
 import 'ui/screens/dashboard_screen.dart';
 import 'ui/screens/leaderboard_screen.dart';
@@ -21,6 +23,9 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  final notificationService = NotificationService();
+  await notificationService.initialize();
 
   runApp(const ProviderScope(child: FantaDanieleApp()));
 }
