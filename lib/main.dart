@@ -6,12 +6,15 @@ import 'firebase_options.dart';
 
 import 'logic/auth_provider.dart';
 import 'ui/widgets/shake_detector_wrapper.dart';
+import 'logic/theme_provider.dart';
 
 import 'ui/screens/login_screen.dart';
 import 'ui/screens/dashboard_screen.dart';
 import 'ui/screens/leaderboard_screen.dart';
 import 'ui/screens/admin_screen.dart';
 import 'ui/screens/rules_screen.dart';
+import 'ui/screens/profile_screen.dart';
+import 'ui/screens/chat_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,25 +49,38 @@ final _router = GoRouter(
       path: '/rules',
       builder: (context, state) => const RulesScreen(),
     ),
+    GoRoute(
+      path: '/profile',
+      builder: (context, state) => const ProfileScreen(),
+    ),
+    GoRoute(
+      path: '/chat',
+      builder: (context, state) => const ChatScreen(),
+    ),
   ],
 );
 
-class FantaDanieleApp extends StatelessWidget {
+class FantaDanieleApp extends ConsumerWidget {
   const FantaDanieleApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'FantaDaniele',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1E5BB5)),
-        useMaterial3: true,
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeProvider);
+
+    return ShakeDetectorWrapper(
+      child: MaterialApp.router(
+        title: 'FantaDaniele',
+        themeMode: themeMode,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent, brightness: Brightness.light),
+          useMaterial3: true,
+        ),
+        darkTheme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent, brightness: Brightness.dark),
+          useMaterial3: true,
+        ),
+        routerConfig: _router,
       ),
-      routerConfig: _router,
-      builder: (context, child) {
-        return ShakeDetectorWrapper(child: child!);
-      },
-      debugShowCheckedModeBanner: false,
     );
   }
 }

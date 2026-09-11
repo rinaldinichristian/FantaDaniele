@@ -37,13 +37,13 @@ class AuthController {
         await messaging.requestPermission();
         final fcmToken = await messaging.getToken();
 
-        final userDoc = await _firestore.collection('users').doc(user.uid).get();
+        final userDoc = await _firestore.collection('fd_users').doc(user.uid).get();
         if (!userDoc.exists) {
           // Se è il primissimo utente di tutto il database, lo facciamo Admin
-          final usersCount = await _firestore.collection('users').count().get();
+          final usersCount = await _firestore.collection('fd_users').count().get();
           final isFirst = usersCount.count == 0;
 
-          await _firestore.collection('users').doc(user.uid).set({
+          await _firestore.collection('fd_users').doc(user.uid).set({
             'name': user.displayName ?? 'Utente Sconosciuto',
             'avatarUrl': user.photoURL,
             'points': 0,
@@ -55,7 +55,7 @@ class AuthController {
           });
         } else {
           // Aggiorna il token se già esiste
-          await _firestore.collection('users').doc(user.uid).update({'fcmToken': fcmToken});
+          await _firestore.collection('fd_users').doc(user.uid).update({'fcmToken': fcmToken});
         }
       }
     } catch (e) {

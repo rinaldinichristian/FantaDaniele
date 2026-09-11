@@ -19,7 +19,7 @@ class FirestoreRepository {
   // ----------------------------------------
   Stream<List<AppUser>> watchLeaderboard() {
     return _db
-        .collection('users')
+        .collection('fd_users')
         .orderBy('points', descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs
@@ -28,15 +28,16 @@ class FirestoreRepository {
   }
 
   Future<void> updateUserPoints(String userId, int points) async {
-    await _db.collection('users').doc(userId).update({'points': points});
+    await _db.collection('fd_users').doc(userId).update({'points': points});
   }
 
-  Future<void> updateUserRoles(String userId, {bool? isAdmin, bool? isDaniele}) async {
-    final Map<String, dynamic> data = {};
+  Future<void> updateUserRoles(String userId, {bool? isAdmin, bool? isDaniele, String? name}) async {
+    final data = <String, dynamic>{};
     if (isAdmin != null) data['isAdmin'] = isAdmin;
     if (isDaniele != null) data['isDaniele'] = isDaniele;
+    if (name != null) data['name'] = name;
     if (data.isNotEmpty) {
-      await _db.collection('users').doc(userId).update(data);
+      await _db.collection('fd_users').doc(userId).update(data);
     }
   }
 
@@ -44,7 +45,7 @@ class FirestoreRepository {
   // SESSIONE GIORNALIERA
   // ----------------------------------------
   Stream<DailySession> watchTodaySession() {
-    return _db.collection('sessions').doc(_todayId).snapshots().map((doc) {
+    return _db.collection('fd_sessions').doc(_todayId).snapshots().map((doc) {
       if (!doc.exists) {
         // Se non esiste, assumiamo che le scommesse siano aperte di default
         return DailySession(id: _todayId, isOpen: true);
@@ -54,13 +55,13 @@ class FirestoreRepository {
   }
 
   Future<void> setSessionState(bool isOpen) async {
-    await _db.collection('sessions').doc(_todayId).set({
+    await _db.collection('fd_sessions').doc(_todayId).set({
       'isOpen': isOpen,
     }, SetOptions(merge: true));
   }
 
   Future<void> endSession(int actualHour, int actualMinute) async {
-    final sessionRef = _db.collection('sessions').doc(_todayId);
+    final sessionRef = _db.collection('fd_sessions').doc(_todayId);
     
     await sessionRef.set({
       'isOpen': false,
@@ -93,7 +94,7 @@ class FirestoreRepository {
       for (var doc in betsSnapshot.docs) {
         final betUserId = doc.id;
         final isWinner = (betUserId == winnerId);
-        final userRef = _db.collection('users').doc(betUserId);
+        final userRef = _db.collection('fd_users').doc(betUserId);
         
         await _db.runTransaction((transaction) async {
           final userSnap = await transaction.get(userRef);
@@ -122,7 +123,7 @@ class FirestoreRepository {
   // ----------------------------------------
   Stream<List<Bet>> watchTodayBets() {
     return _db
-        .collection('sessions')
+        .collection('fd_sessions')
         .doc(_todayId)
         .collection('bets')
         .orderBy('createdAt', descending: false)
@@ -133,12 +134,12 @@ class FirestoreRepository {
   }
 
   Future<void> placeBet({required String userId, required String userName, required int hour, required int minute}) async {
-    final sessionDoc = await _db.collection('sessions').doc(_todayId).get();
+    final sessionDoc = await _db.collection('fd_sessions').doc(_todayId).get();
     if (sessionDoc.exists && sessionDoc.data()?['isOpen'] == false) {
       throw Exception('Le scommesse per oggi sono chiuse!');
     }
 
-    final betRef = _db.collection('sessions').doc(_todayId).collection('bets').doc(userId);
+    final betRef = _db.collection('fd_sessions').doc(_todayId).collection('bets').doc(userId);
     
     final betDoc = await betRef.get();
     if (betDoc.exists) {
@@ -153,6 +154,28 @@ class FirestoreRepository {
       'hour': hour,
       'minute': minute,
       'createdAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  // ----------------------------------------
+  // CHAT
+  // ----------------------------------------
+  Stream<List<ChatMessage>> watchChatMessages() {
+    return _db
+        .collection('chat')
+        .orderBy('timestamp', descending: true)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => ChatMessage.fromMap(doc.id, doc.data()))
+            .toList());
+  }
+
+  Future<void> sendMessage({required String userId, required String userName, required String text}) async {
+    await _db.collection('chat').add({
+      'userId': userId,
+      'userName': userName,
+      'text': text,
+      'timestamp': FieldValue.serverTimestamp(),
     });
   }
 }

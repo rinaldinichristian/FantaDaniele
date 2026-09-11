@@ -37,7 +37,10 @@ class LoginScreen extends ConsumerWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.shield, size: 100, color: Colors.white),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Image.asset('assets/logo.png', width: 120, height: 120),
+          ),
           const SizedBox(height: 20),
           const Text(
             'FantaDaniele',

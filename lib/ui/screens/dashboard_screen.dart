@@ -5,7 +5,9 @@ import 'package:go_router/go_router.dart';
 import '../../logic/auth_provider.dart';
 import '../../logic/firestore_repository.dart';
 import '../../services/update_service.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'leaderboard_screen.dart';
+import '../../logic/weather_provider.dart';
 
 // Providers per gli stream della dashboard
 final todaySessionProvider = StreamProvider((ref) {
@@ -32,6 +34,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     });
   }
 
+  final _packageInfoFuture = PackageInfo.fromPlatform();
+
   @override
   Widget build(BuildContext context) {
     final sessionAsync = ref.watch(todaySessionProvider);
@@ -47,6 +51,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             onPressed: () => context.push('/rules'),
           ),
           IconButton(
+            icon: const Icon(Icons.chat),
+            onPressed: () => context.push('/chat'),
+          ),
+          IconButton(
             icon: const Icon(Icons.leaderboard),
             onPressed: () => context.push('/leaderboard'),
           ),
@@ -58,6 +66,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               onPressed: () => context.push('/admin'),
             ),
           IconButton(
+            icon: const Icon(Icons.person),
+            onPressed: () => context.push('/profile'),
+          ),
+          IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
               ref.read(authControllerProvider).signOut();
@@ -66,24 +78,37 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Widget Meteo (Placeholder)
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.wb_sunny, color: Colors.orange, size: 40),
-                    const SizedBox(width: 16),
-                    const Text('Sole, 22°C', style: TextStyle(fontSize: 24)),
-                  ],
+      body: FutureBuilder<PackageInfo>(
+        future: _packageInfoFuture,
+        builder: (context, snapshot) {
+          final version = snapshot.data?.version ?? '1.0.0';
+          final body = Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+
+            // Widget Meteo (Brescia via Open-Meteo)
+            ref.watch(weatherProvider).when(
+              data: (weather) => Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        weather.weatherCode == 0 ? Icons.wb_sunny : Icons.cloud,
+                        color: weather.weatherCode == 0 ? Colors.orange : Colors.grey,
+                        size: 40,
+                      ),
+                      const SizedBox(width: 16),
+                      Text('${weather.description}, ${weather.temperature}°C', style: const TextStyle(fontSize: 24)),
+                    ],
+                  ),
                 ),
               ),
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (err, _) => const SizedBox(),
             ),
             const SizedBox(height: 24),
 
@@ -188,7 +213,16 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               ),
             ),
           ],
-        ),
+        );
+        
+        return ClipRect(
+          child: Banner(
+            message: 'v$version',
+            location: BannerLocation.topStart,
+            child: body,
+          ),
+        );
+      },
       ),
     );
   }

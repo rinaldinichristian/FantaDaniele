@@ -44,3 +44,29 @@ class AppUser {
     };
   }
 }
+
+class ChatMessage {
+  final String id;
+  final String userId;
+  final String userName;
+  final String text;
+  final DateTime timestamp;
+
+  ChatMessage({
+    required this.id,
+    required this.userId,
+    required this.userName,
+    required this.text,
+    required this.timestamp,
+  });
+
+  factory ChatMessage.fromMap(String id, Map<String, dynamic> data) {
+    return ChatMessage(
+      id: id,
+      userId: data['userId'] ?? '',
+      userName: data['userName'] ?? 'Utente',
+      text: data['text'] ?? '',
+      timestamp: data['timestamp']?.toDate() ?? DateTime.now(),
+    );
+  }
+}
